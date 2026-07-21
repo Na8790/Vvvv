@@ -58,6 +58,12 @@ class VoiceCloneViewModel(application: Application) : AndroidViewModel(applicati
     private val _isSynthesizing = MutableStateFlow(false)
     val isSynthesizing: StateFlow<Boolean> = _isSynthesizing.asStateFlow()
 
+    private val _synthesisProgress = MutableStateFlow(0f)
+    val synthesisProgress: StateFlow<Float> = _synthesisProgress.asStateFlow()
+
+    private val _synthesisStepText = MutableStateFlow("")
+    val synthesisStepText: StateFlow<String> = _synthesisStepText.asStateFlow()
+
     private val _currentSynthesizedAudio = MutableStateFlow<GeneratedAudioEntity?>(null)
     val currentSynthesizedAudio: StateFlow<GeneratedAudioEntity?> = _currentSynthesizedAudio.asStateFlow()
 
@@ -76,6 +82,12 @@ class VoiceCloneViewModel(application: Application) : AndroidViewModel(applicati
 
     private val _isAnalyzingVoice = MutableStateFlow(false)
     val isAnalyzingVoice: StateFlow<Boolean> = _isAnalyzingVoice.asStateFlow()
+
+    private val _cloningProgress = MutableStateFlow(0f)
+    val cloningProgress: StateFlow<Float> = _cloningProgress.asStateFlow()
+
+    private val _cloningStepText = MutableStateFlow("")
+    val cloningStepText: StateFlow<String> = _cloningStepText.asStateFlow()
 
     private val _newVoiceName = MutableStateFlow("")
     val newVoiceName: StateFlow<String> = _newVoiceName.asStateFlow()
@@ -151,9 +163,23 @@ class VoiceCloneViewModel(application: Application) : AndroidViewModel(applicati
 
         viewModelScope.launch {
             _isSynthesizing.value = true
+            _synthesisProgress.value = 0.15f
+            _synthesisStepText.value = "تجهيز النص والتشكيل اللغوي..."
             _errorMessage.value = null
             try {
+                delay(300)
+                _synthesisProgress.value = 0.45f
+                _synthesisStepText.value = "معالجة الصوت عبر نموذج الذكاء الاصطناعي..."
+
                 val generated = repository.synthesizeSpeech(text, voice)
+
+                _synthesisProgress.value = 0.85f
+                _synthesisStepText.value = "بناء هندسة الترددات والترميز الصوتي..."
+                delay(200)
+
+                _synthesisProgress.value = 1.0f
+                _synthesisStepText.value = "تم تحويل النص بنجاح!"
+
                 if (generated != null) {
                     _currentSynthesizedAudio.value = generated
                     _toastMessage.value = "تم استنساخ الصوت بنجاح! 🎙️"
@@ -223,9 +249,23 @@ class VoiceCloneViewModel(application: Application) : AndroidViewModel(applicati
 
         viewModelScope.launch {
             _isAnalyzingVoice.value = true
+            _cloningProgress.value = 0.20f
+            _cloningStepText.value = "رفع ومعالجة العينة الصوتية المسجلة..."
             _errorMessage.value = null
             try {
+                delay(400)
+                _cloningProgress.value = 0.55f
+                _cloningStepText.value = "تحليل البصمة الصوتية وتحديد الترددات بالنواة..."
+
                 val newProfile = repository.analyzeAndCreateCustomVoice(audioFile, name)
+
+                _cloningProgress.value = 0.85f
+                _cloningStepText.value = "بناء الملف الصوتي الرقمي المخصص المباشر..."
+                delay(300)
+
+                _cloningProgress.value = 1.0f
+                _cloningStepText.value = "تم استنساخ الصوت وحفظه في قاعدة البيانات!"
+
                 _selectedVoice.value = newProfile
                 _toastMessage.value = "تم إنشاء واستنساخ الصوت (${newProfile.name}) بنجاح! ✨"
                 _newVoiceName.value = ""

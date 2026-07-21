@@ -46,6 +46,8 @@ fun VoiceCloneScreen(
     newVoiceName: String,
     onVoiceNameChange: (String) -> Unit,
     isAnalyzing: Boolean,
+    cloningProgress: Float = 0f,
+    cloningStepText: String = "",
     onAnalyzeAndClone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -285,7 +287,65 @@ fun VoiceCloneScreen(
                 singleLine = true
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (isAnalyzing) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, AccentPink, RoundedCornerShape(16.dp)),
+                    colors = CardDefaults.cardColors(containerColor = StudioSurfaceVariant),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(20.dp),
+                                    color = AccentPink,
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = if (cloningStepText.isNotBlank()) cloningStepText else "جاري تحليل الخصائص واستنساخ الصوت...",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPrimary
+                                )
+                            }
+
+                            Text(
+                                text = "${(cloningProgress * 100).toInt()}%",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = AccentPink
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        LinearProgressIndicator(
+                            progress = { cloningProgress.coerceIn(0.05f, 1.0f) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .testTag("voice_cloning_progress_bar"),
+                            color = AccentPink,
+                            trackColor = StudioCardBorder,
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             // Clone Action Button
             Button(
@@ -310,14 +370,8 @@ fun VoiceCloneScreen(
                 ) {
                     if (isAnalyzing) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            CircularProgressIndicator(
-                                color = Color.White,
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.5.dp
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
                             Text(
-                                text = "جاري تحليل الخصائص واستنساخ الصوت...",
+                                text = "جاري معالجة الصوت...",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White

@@ -42,6 +42,8 @@ fun StudioScreen(
     selectedVoice: VoiceProfileEntity?,
     onSelectVoice: (VoiceProfileEntity) -> Unit,
     isSynthesizing: Boolean,
+    synthesisProgress: Float = 0f,
+    synthesisStepText: String = "",
     onSynthesize: () -> Unit,
     currentSynthesizedAudio: GeneratedAudioEntity?,
     playbackState: PlaybackState,
@@ -254,6 +256,64 @@ fun StudioScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        // Processing Progress Bar Box
+        if (isSynthesizing) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp)
+                    .border(1.dp, PrimaryViolet, RoundedCornerShape(16.dp)),
+                colors = CardDefaults.cardColors(containerColor = StudioSurfaceVariant),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = PrimaryViolet,
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = if (synthesisStepText.isNotBlank()) synthesisStepText else "جاري معالجة الصوت بالذكاء الاصطناعي...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = TextPrimary
+                            )
+                        }
+
+                        Text(
+                            text = "${(synthesisProgress * 100).toInt()}%",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = SecondaryCyan
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    LinearProgressIndicator(
+                        progress = { synthesisProgress.coerceIn(0.05f, 1.0f) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .testTag("synthesis_progress_bar"),
+                        color = PrimaryViolet,
+                        trackColor = StudioCardBorder,
+                    )
+                }
+            }
+        }
+
         // Synthesize Button
         Button(
             onClick = onSynthesize,
@@ -283,14 +343,8 @@ fun StudioScreen(
             ) {
                 if (isSynthesizing) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        CircularProgressIndicator(
-                            color = Color.White,
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.5.dp
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "جاري تحويل النص بالصوت المستنسخ...",
+                            text = "جاري التوليد...",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color.White

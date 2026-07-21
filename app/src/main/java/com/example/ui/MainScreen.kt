@@ -41,6 +41,8 @@ fun MainScreen(viewModel: VoiceCloneViewModel) {
     val voices by viewModel.voicesList.collectAsStateWithLifecycle()
     val selectedVoice by viewModel.selectedVoice.collectAsStateWithLifecycle()
     val isSynthesizing by viewModel.isSynthesizing.collectAsStateWithLifecycle()
+    val synthesisProgress by viewModel.synthesisProgress.collectAsStateWithLifecycle()
+    val synthesisStepText by viewModel.synthesisStepText.collectAsStateWithLifecycle()
     val currentSynthesizedAudio by viewModel.currentSynthesizedAudio.collectAsStateWithLifecycle()
     val playbackState by viewModel.playbackState.collectAsStateWithLifecycle()
 
@@ -50,6 +52,8 @@ fun MainScreen(viewModel: VoiceCloneViewModel) {
     val recordedAudioFile by viewModel.recordedAudioFile.collectAsStateWithLifecycle()
     val newVoiceName by viewModel.newVoiceName.collectAsStateWithLifecycle()
     val isAnalyzingVoice by viewModel.isAnalyzingVoice.collectAsStateWithLifecycle()
+    val cloningProgress by viewModel.cloningProgress.collectAsStateWithLifecycle()
+    val cloningStepText by viewModel.cloningStepText.collectAsStateWithLifecycle()
 
     val historyList by viewModel.historyList.collectAsStateWithLifecycle()
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
@@ -206,6 +210,8 @@ fun MainScreen(viewModel: VoiceCloneViewModel) {
                         selectedVoice = selectedVoice,
                         onSelectVoice = viewModel::selectVoice,
                         isSynthesizing = isSynthesizing,
+                        synthesisProgress = synthesisProgress,
+                        synthesisStepText = synthesisStepText,
                         onSynthesize = viewModel::synthesizeTextToSpeech,
                         currentSynthesizedAudio = currentSynthesizedAudio,
                         playbackState = playbackState,
@@ -228,6 +234,8 @@ fun MainScreen(viewModel: VoiceCloneViewModel) {
                         newVoiceName = newVoiceName,
                         onVoiceNameChange = viewModel::updateNewVoiceName,
                         isAnalyzing = isAnalyzingVoice,
+                        cloningProgress = cloningProgress,
+                        cloningStepText = cloningStepText,
                         onAnalyzeAndClone = viewModel::analyzeAndCloneVoice
                     )
 
