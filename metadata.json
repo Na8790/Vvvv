@@ -1,0 +1,6 @@
+{
+  "name": "استنساخ الأصوات - Voice Clone AI",
+  "description": "تطبيق استنساخ الأصوات الذكي وتحويل النص إلى كلام بصوتك المستنسخ بواسطة الذكاء الاصطناعي",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
